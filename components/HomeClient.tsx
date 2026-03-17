@@ -6,7 +6,7 @@ import { PROVIDER_CONFIG, type SpeedMode } from "../lib/spinConfig";
 import { PROVIDER_META, type ProviderMeta } from "../lib/providerMeta";
 
 const BRAND_NAME = "SUHUCUAN"; // ganti kalau mau pakai nama lain
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50;
 const PLAY_LOGIN_URL = "https://sniplink.org/suhucuan-alternatif";
 
 const getImagePathForGame = (provider: string, slug: string) => {
@@ -550,8 +550,10 @@ export default function HomeClient({ games }: Props) {
           {/* Logo brand menggantikan teks AYOBET */}
           <div className="mt-2">
             <img
-              src="/logo.gif"
+              src="/logo.png"
               alt={BRAND_NAME}
+              loading="eager"
+              decoding="async"
               className="h-14 sm:h-16 mx-auto drop-shadow-[0_0_15px_rgba(0,0,0,0.55)]"
             />
           </div>
@@ -813,10 +815,11 @@ export default function HomeClient({ games }: Props) {
       <section className="px-2 py-6 sm:px-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-            {pagedGames.map((g) => {
+            {pagedGames.map((g, index) => {
               const rtpPercent = clampRtpPercent(g.rtp_min);
               const folder = g.provider.toLowerCase();
-
+              const shouldEagerLoad = index < 6;
+            
               return (
                 <article
                   key={g.id}
@@ -826,6 +829,9 @@ export default function HomeClient({ games }: Props) {
                     <img
                       src={`/games/${folder}/${g.slug}.jpg`}
                       alt={g.display_name}
+                      loading={shouldEagerLoad ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={shouldEagerLoad ? "high" : "low"}
                       className="w-full aspect-square object-cover rounded-lg bg-neutral-800"
                     />
                     <span className="absolute left-2 top-2 text-[10px] px-2 py-0.5 rounded-full bg-black/70">
@@ -979,8 +985,10 @@ export default function HomeClient({ games }: Props) {
                       JAM GACOR
                     </div>
                     <img
-                      src="/logo.gif"
+                      src="/logo.png"
                       alt={BRAND_NAME}
+                      loading="lazy"
+                      decoding="async"
                       className="h-5 sm:h-7 md:h-8 w-auto max-w-[140px] object-contain"
                     />
                   </div>
